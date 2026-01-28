@@ -123,7 +123,23 @@
                             </a>
                         </li>
                         
+                        @if(auth()->user()->isAdmin())
+                            <!-- ADMIN ONLY MENU -->
+                            <li class="nav-item mt-3">
+                                <h6 class="text-white-50 px-3 mb-2">ADMIN PANEL</h6>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                                    <i class="fas fa-user-shield"></i> Kelola User
+                                </a>
+                            </li>
+                        @endif
+                        
                         @if(auth()->user()->isAdmin() || auth()->user()->isOperator())
+                            <!-- ADMIN & OPERATOR MENU -->
+                            <li class="nav-item mt-3">
+                                <h6 class="text-white-50 px-3 mb-2">DATA MASTER</h6>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}" href="{{ route('pelanggan.index') }}">
                                     <i class="fas fa-users"></i> Pelanggan
@@ -177,9 +193,13 @@
                         @endif
                         
                         @if(auth()->user()->isPelanggan())
+                            <!-- PELANGGAN MENU -->
+                            <li class="nav-item mt-3">
+                                <h6 class="text-white-50 px-3 mb-2">AKUN SAYA</h6>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('my-account') ? 'active' : '' }}" href="{{ route('my-account') }}">
-                                    <i class="fas fa-user"></i> Akun Saya
+                                    <i class="fas fa-user"></i> Profil Saya
                                 </a>
                             </li>
                             <li class="nav-item">

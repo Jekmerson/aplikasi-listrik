@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+<<<<<<< HEAD
     // ========================================
     // ADMIN ONLY ROUTES
     // ========================================
@@ -60,9 +61,41 @@ Route::middleware(['auth'])->group(function () {
         Route::get('pelanggan/{pelanggan}', [PelangganController::class, 'show'])->name('pelanggan.show');
         Route::get('pelanggan/{pelanggan}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
         Route::put('pelanggan/{pelanggan}', [PelangganController::class, 'update'])->name('pelanggan.update');
+=======
+    // Routes for Admin ONLY
+    Route::middleware(['role:Admin'])->group(function () {
+        // User Management (Admin exclusive)
+        Route::get('users', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+        Route::post('users', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+        Route::get('users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+        Route::put('users/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+        Route::delete('users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
         
-        // Penggunaan management
-        Route::resource('penggunaan', PenggunaanController::class);
+        // Delete operations (Admin only)
+        Route::delete('pelanggan/{id}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
+        Route::delete('penggunaan/{id}', [PenggunaanController::class, 'destroy'])->name('penggunaan.destroy');
+    });
+
+    // Routes for Admin & Operator
+    Route::middleware(['role:Admin,Operator'])->group(function () {
+        
+        // Pelanggan management (Operator can't delete)
+        Route::get('pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
+        Route::get('pelanggan/create', [PelangganController::class, 'create'])->name('pelanggan.create');
+        Route::post('pelanggan', [PelangganController::class, 'store'])->name('pelanggan.store');
+        Route::get('pelanggan/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
+        Route::get('pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
+        Route::put('pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+>>>>>>> ae5d0ab0a4757f5681c21bcfc152c870054960fd
+        
+        // Penggunaan management (Operator can't delete)
+        Route::get('penggunaan', [PenggunaanController::class, 'index'])->name('penggunaan.index');
+        Route::get('penggunaan/create', [PenggunaanController::class, 'create'])->name('penggunaan.create');
+        Route::post('penggunaan', [PenggunaanController::class, 'store'])->name('penggunaan.store');
+        Route::get('penggunaan/{id}', [PenggunaanController::class, 'show'])->name('penggunaan.show');
+        Route::get('penggunaan/{id}/edit', [PenggunaanController::class, 'edit'])->name('penggunaan.edit');
+        Route::put('penggunaan/{id}', [PenggunaanController::class, 'update'])->name('penggunaan.update');
         Route::get('penggunaan/latest-meter/{id_pelanggan}', [PenggunaanController::class, 'getLatestMeter'])
             ->name('penggunaan.latest-meter');
         
