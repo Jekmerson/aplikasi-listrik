@@ -164,15 +164,6 @@
                         
                         @if(auth()->user()->isAdmin())
                             <li class="nav-item mt-3">
-                                <h6 class="text-white-50 px-3 mb-2">ADMIN</h6>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                                    <i class="fas fa-user-cog"></i> Kelola User
-                                </a>
-                            </li>
-                            
-                            <li class="nav-item mt-3">
                                 <h6 class="text-white-50 px-3 mb-2">LAPORAN</h6>
                             </li>
                             <li class="nav-item">
