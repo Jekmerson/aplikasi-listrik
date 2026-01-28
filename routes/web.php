@@ -25,11 +25,41 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Routes for Admin & Operator
+    // ========================================
+    // ADMIN ONLY ROUTES
+    // ========================================
+    Route::middleware(['admin'])->group(function () {
+        
+        // User Management (Admin only)
+        Route::resource('users', \App\Http\Controllers\UserController::class);
+        Route::post('users/{user}/toggle-active', [\App\Http\Controllers\UserController::class, 'toggleActive'])
+            ->name('users.toggle-active');
+        
+        // Pelanggan - Delete only for Admin
+        Route::delete('pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])
+            ->name('pelanggan.destroy');
+        
+        // Full Reports Access (Admin only)
+        Route::prefix('laporan')->name('laporan.')->group(function () {
+            Route::get('penggunaan', [LaporanController::class, 'penggunaan'])->name('penggunaan');
+            Route::get('pembayaran', [LaporanController::class, 'pembayaran'])->name('pembayaran');
+            Route::get('tunggakan', [LaporanController::class, 'tunggakan'])->name('tunggakan');
+            Route::get('pelanggan-per-daya', [LaporanController::class, 'pelangganPerDaya'])->name('pelanggan-per-daya');
+        });
+    });
+
+    // ========================================
+    // ADMIN & OPERATOR ROUTES
+    // ========================================
     Route::middleware(['role:Admin,Operator'])->group(function () {
         
-        // Pelanggan management
-        Route::resource('pelanggan', PelangganController::class);
+        // Pelanggan management (View, Create, Edit for both)
+        Route::get('pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
+        Route::get('pelanggan/create', [PelangganController::class, 'create'])->name('pelanggan.create');
+        Route::post('pelanggan', [PelangganController::class, 'store'])->name('pelanggan.store');
+        Route::get('pelanggan/{pelanggan}', [PelangganController::class, 'show'])->name('pelanggan.show');
+        Route::get('pelanggan/{pelanggan}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
+        Route::put('pelanggan/{pelanggan}', [PelangganController::class, 'update'])->name('pelanggan.update');
         
         // Penggunaan management
         Route::resource('penggunaan', PenggunaanController::class);
@@ -45,17 +75,11 @@ Route::middleware(['auth'])->group(function () {
         // Pembayaran management
         Route::resource('pembayaran', PembayaranController::class)->only(['index', 'create', 'store', 'show']);
         Route::get('pembayaran/{id}/receipt', [PembayaranController::class, 'printReceipt'])->name('pembayaran.receipt');
-        
-        // Laporan (Reports)
-        Route::prefix('laporan')->name('laporan.')->group(function () {
-            Route::get('penggunaan', [LaporanController::class, 'penggunaan'])->name('penggunaan');
-            Route::get('pembayaran', [LaporanController::class, 'pembayaran'])->name('pembayaran');
-            Route::get('tunggakan', [LaporanController::class, 'tunggakan'])->name('tunggakan');
-            Route::get('pelanggan-per-daya', [LaporanController::class, 'pelangganPerDaya'])->name('pelanggan-per-daya');
-        });
     });
 
-    // Routes for Pelanggan (Customer)
+    // ========================================
+    // PELANGGAN (CUSTOMER) ROUTES
+    // ========================================
     Route::middleware(['role:Pelanggan'])->group(function () {
         Route::get('/my-account', function () {
             $pelanggan = auth()->user()->pelanggan;
