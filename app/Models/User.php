@@ -12,15 +12,21 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'user';
+    protected $primaryKey = 'id_user';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
         'password',
+        'nama_lengkap',
+        'email',
+        'id_level',
+        'is_active',
     ];
 
     /**
@@ -41,8 +47,48 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
+
+    /**
+     * Relasi ke Level
+     */
+    public function level()
+    {
+        return $this->belongsTo(Level::class, 'id_level', 'id_level');
+    }
+
+    /**
+     * Relasi ke Pelanggan
+     */
+    public function pelanggan()
+    {
+        return $this->hasOne(Pelanggan::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin()
+    {
+        return $this->level->nama_level === 'Admin';
+    }
+
+    /**
+     * Check if user is operator
+     */
+    public function isOperator()
+    {
+        return $this->level->nama_level === 'Operator';
+    }
+
+    /**
+     * Check if user is pelanggan
+     */
+    public function isPelanggan()
+    {
+        return $this->level->nama_level === 'Pelanggan';
+    }
 }
+
